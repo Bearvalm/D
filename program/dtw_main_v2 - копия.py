@@ -5,7 +5,6 @@ import librosa
 import misc
 from tkinter import filedialog
 
-from sklearn.cluster import KMeans
 from dtw import dtw
 from numpy.linalg import norm
 
@@ -45,8 +44,6 @@ learningNames += ['переход_файл', 'переход_папка']
 
 resultingData = {}
 
-km = []
-names = []
 for testFile, testFeature in testingDataSet.items():
 	tempRes = []
 	for lrnFile, lrnFeature in learningDataSet.items():
@@ -54,9 +51,6 @@ for testFile, testFeature in testingDataSet.items():
 		dist, cost, acc_cost, path = dtw(testFeature.T, lrnFeature.T, dist=euclidean)
 
 		tempRes.append([dist, lrnFile])
-
-		km.append([dist])
-		names.append([testFile, lrnFile])
 
 	tmp = {name: [0, 0] for name in learningNames}
 	for value, name in tempRes:
@@ -67,9 +61,6 @@ for testFile, testFeature in testingDataSet.items():
 
 	resultingData[testFile] = min(tempRes)
 
-kmeans = KMeans(n_clusters=10, random_state=0).fit(km)
-
-print(*zip(names, kmeans.labels_))
 
 tempRes = ['{} *** {} == {}'.format(testFile, lrnArgs[1], lrnArgs[0])
            for testFile, lrnArgs in resultingData.items()]
